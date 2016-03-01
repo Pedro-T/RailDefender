@@ -38,9 +38,13 @@ menu[2] = menuExitGame
 
 local score = 0
 local lives = 5
+local deadEnemies = 0
 
 gameState = 1
 gameOver = false
+currentLevel = 1
+intermissionTimer = 0
+gameOverConditionWin = true
 
 -- Menu activities
 
@@ -59,6 +63,17 @@ function updateMenu(delta)
    end
 end
 
+function advanceLevel(level)
+    if not level == 4 then
+        currentLevel = currentLevel + 1
+        intermissionTimer = 5
+        gameState = 3
+        --enemiesDestroyed = 0
+    else
+        gameState = 4
+    end
+end
+
 -- Load our assets and set up some structures
 
 function mainMenu()
@@ -75,6 +90,7 @@ function createPlayer()
     player["ypos"] = 420
     player["movementSpeed"] = 150
     player['shotCooldown'] = 0.25
+    return player
 end
 
 function loadAudio()
@@ -102,6 +118,7 @@ function checkHit(bulletX, bulletY, unitX, unitY)
 end
 
 function spawnEnemy()
+    local enemyIndex = math.random(levelTemplate[currentLevel].enemyBoundA, levelTemplate[currentLevel].enemyBoundB)
     local enemy = {}
     enemy['graphic'] = love.graphics.newImage("assets/enemyTank.png")
     enemy['xpos'] = math.random(450) + 175
@@ -150,6 +167,8 @@ function updateBullets()
         for j, enemy in ipairs(aliveEnemies) do
             if checkHit(bullet.xpos, bullet.ypos, enemy.xpos, enemy.ypos) then
                 table.remove(aliveEnemies, j)
+                deadEnemies = deadEnemies + 1
+                table.remove(aliveBullets, i)
                 score = score + enemy.pointValue
             end
         end
@@ -172,24 +191,28 @@ function love.update(delta)
     if gameState == 1 then -- we're in the menu
         updateMenu(delta)
     elseif gameState == 2 then -- we're playing the game
+        if (deadEnemies >= levelTemplate[currentLevel].enemyCount) then
+            advanceLevel(currentLevel)
+        end
         movePlayer(delta)
         moveEnemies(delta)
         updateBullets()
         if (math.random(100) > 80 and table.getn(aliveEnemies) < 11) then
             spawnEnemy()
         end
-    elseif gameState == 3 then -- we've won or lost and are at results screen
-
+    elseif gameState == 3 then -- level intermission
+        intermissionTimer = intermissionTimer - delta
+        if intermissionTimer <= 0 then gameState = 2 end
     end
     if lives == 0 then
-        gameOver = true
+        gameState = 5
     end
 end
 
 function love.draw()
     if (gameState == 1) then
         mainMenu()
-    else
+    elseif gameState == 2 then
         if gameOver == false then
             love.graphics.draw(background,0,0)
             love.graphics.draw(player.graphic, player.xpos, player.ypos)
@@ -200,15 +223,24 @@ function love.draw()
                 love.graphics.draw(enemy.graphic, enemy.xpos, enemy.ypos)
             end
             love.graphics.print("Score: " .. score, 400, 50)
-        else
-            love.graphics.print("Game over!", 350, 200)
-            love.graphics.print("Your score: " .. score, 350, 250)
+            love.graphics.print("Level: " .. currentLevel, 400, 65)
         end
+    elseif gameState == 3 then
+        love.graphics.print("Level Complete!", 400, 300)
+        love.graphics.print("Score: " .. score, 400, 320)
+        love.graphics.print("Next level in..." .. intermissionTimer)
+    elseif gameState == 4 then
+        love.graphics.print("Victory!", 350, 200)
+        love.graphics.print("Your score: " .. score, 350, 250)
+    else
+        love.graphics.print("Game over! You lose!", 350, 200)
+        love.graphics.print("Your score: " .. score, 350, 250)
     end
 end
 
 function love.load()
+    player = createPlayer()
     loadAudio()
-    createPlayer()
+    love.window.setTitle("RailDefender")
     love.audio.play(stSound)
 end
