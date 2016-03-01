@@ -1,33 +1,87 @@
 --
--- Created by IntelliJ IDEA.
--- User: Pedro
+-- Author: Pedro Teixeira
 -- Date: 2/26/2016
 --
 
 -- player "object" for organization - this table holds all info relevant to the player
-player = {}
-player["graphic"] = love.graphics.newImage("player.png")
-player["xpos"] = 300
-player["ypos"] = 500
-player["movementSpeed"] = 100
-player['shotCooldown'] = 0.25
+
 
 -- attributes for player-fired bullets
 bulletInfo = {}
 bulletInfo["graphic"] = love.graphics.newImage("bullet.png")
 bulletInfo["movementSpeed"] = 10
 
+background = love.graphics.newImage("assets/background.png")
+
 -- Store bullets and enemies to iterate through for updating/drawing
 aliveBullets = {}
 aliveEnemies = {}
 
+-- Main menu --------------------------------------------------------------------------------------------
+
+menuStartGame = {}
+menuStartGame['text'] = "Start Game"
+menuStartGame['action'] = function() gameState = 2 end
+menuExitGame = {}
+menuExitGame['text'] = "Exit Game"
+menuExitGame['action'] = function() love.event.quit() end
+menu = {}
+menu['selectedItem'] = 1
+menu['updateCooldown'] = 0.5
+menu[1] = menuStartGame
+menu[2] = menuExitGame
+
+-- Game-wide variables ---------------------------------------------------------------------------------
+
 score = 0
 lives = 5
 
+gameState = 1
 gameOver = false
 
+-- Menu activities
 
--- Check if the player is allowed to fire a shot, then spawn a bullet at their position and give a cooldown time
+function updateMenu(delta)
+    if menu.updateCooldown > 0 then
+        menu.updateCooldown = menu.updateCooldown - delta
+    else
+       if love.keyboard.isDown('up', 'w') and menu.selectedItem > 1 then
+           menu.selectedItem = menu.selectedItem - 1
+       elseif love.keyboard.isDown('down', 's') and menu.selectedItem < 2 then
+           menu.selectedItem = menu.selectedItem + 1
+       elseif love.keyboard.isDown('return') then
+           menu[menu.selectedItem].action()
+       end
+   end
+end
+
+-- Load our assets and set up some structures
+
+function mainMenu()
+    for i, menuItem in ipairs(menu) do
+        love.graphics.print(menuItem.text, 300, (200 + i * 25))
+        if (menu.selectedItem == i) then love.graphics.print(">", 290, (200 + i * 25)) end
+    end
+end
+
+function createPlayer()
+    player = {}
+    player["graphic"] = love.graphics.newImage("assets/player.png")
+    player["xpos"] = 150
+    player["ypos"] = 420
+    player["movementSpeed"] = 150
+    player['shotCooldown'] = 0.25
+end
+
+function loadAudio()
+    shootSound = love.audio.newSource("shoot.wav")
+    stSound = love.audio.newSource("soundTrack.mp3")
+    stSound:setVolume(0.15)
+    stSound:setLooping(true)
+end
+
+
+-- Shooting activities ------------------------------------------------------------------------------
 function fireBullet()
     if (player.shotCooldown == 0) then
         bullet = {}
@@ -35,7 +89,9 @@ function fireBullet()
         bullet['ypos'] = player.ypos
         table.insert(aliveBullets, bullet)
         player.shotCooldown = 0.25
+        love.audio.play(shootSound)
     end
+
 end
 
 function checkHit(bulletX, bulletY, unitX, unitY)
@@ -44,13 +100,42 @@ end
 
 function spawnEnemy()
     enemy = {}
-    enemy['graphic'] = love.graphics.newImage("enemyTank.png")
-    enemy['xpos'] = math.random(700)
-    enemy['ypos'] = math.random(300)
+    enemy['graphic'] = love.graphics.newImage("assets/enemyTank.png")
+    enemy['xpos'] = math.random(450) + 175
+    enemy['ypos'] = math.random(175)
     enemy['movementSpeed'] = 25
     enemy['shotCooldown'] = 1
     enemy['pointValue'] = 25
     table.insert(aliveEnemies, enemy)
+end
+
+
+function loseLife()
+    score = score - 250
+    lives = lives - 1
+end
+
+
+
+-- Move things around -----------------------------------------------------------------------------
+
+function movePlayer(delta)
+    if love.keyboard.isDown('d','right') then
+        if player.xpos < (650 - player.movementSpeed * delta) then
+            player.xpos = player.xpos + (player.movementSpeed * delta)
+        end
+    elseif love.keyboard.isDown('a','left') then
+        if player.xpos > (150 + player.movementSpeed * delta) then
+            player.xpos = player.xpos - (player.movementSpeed * delta)
+        end
+    end
+    if love.keyboard.isDown('space') then
+        fireBullet()
+    end
+    player.shotCooldown = player.shotCooldown - delta
+    if (player.shotCooldown < 0) then
+        player.shotCooldown = 0
+    end
 end
 
 function updateBullets()
@@ -68,32 +153,6 @@ function updateBullets()
     end
 end
 
--- This does too many things
-
-function movePlayer(delta)
-    if love.keyboard.isDown('s','right') then
-        if player.xpos < (800 - player.movementSpeed * delta) then
-            player.xpos = player.xpos + (player.movementSpeed * delta)
-        end
-    elseif love.keyboard.isDown('a','left') then
-        if player.xpos > player.movementSpeed * delta then
-            player.xpos = player.xpos - (player.movementSpeed * delta)
-        end
-    end
-    if love.keyboard.isDown('space') then
-        fireBullet()
-    end
-    player.shotCooldown = player.shotCooldown - delta
-    if (player.shotCooldown < 0) then
-        player.shotCooldown = 0
-    end
-end
-
-function loseLife()
-    score = score - 250
-    lives = lives - 1
-end
-
 function moveEnemies(delta)
     for i, enemy in ipairs(aliveEnemies) do
         enemy.ypos = enemy.ypos + (enemy.movementSpeed * delta)
@@ -104,16 +163,20 @@ function moveEnemies(delta)
     end
 end
 
--- Engine called functions
+-- Engine called functions -------------------------------------------------------------------------------
 
 function love.update(delta)
-    if gameOver == false then
+    if gameState == 1 then -- we're in the menu
+        updateMenu(delta)
+    elseif gameState == 2 then -- we're playing the game
         movePlayer(delta)
         moveEnemies(delta)
         updateBullets()
         if (math.random(100) > 80 and table.getn(aliveEnemies) < 11) then
             spawnEnemy()
         end
+    elseif gameState == 3 then -- we've won or lost and are at results screen
+
     end
     if lives == 0 then
         gameOver = true
@@ -121,22 +184,28 @@ function love.update(delta)
 end
 
 function love.draw()
-    if gameOver == false then
-        love.graphics.draw(player.graphic, player.xpos, player.ypos)
-        for i, bullet in ipairs(aliveBullets) do
-            love.graphics.draw(bulletInfo.graphic, bullet.xpos, bullet.ypos)
-        end
-        for j, enemy in ipairs(aliveEnemies) do
-            love.graphics.draw(enemy.graphic, enemy.xpos, enemy.ypos)
-        end
-        love.graphics.print("Score: " .. score, 400, 50)
+    if (gameState == 1) then
+        mainMenu()
     else
-        love.graphics.print("Game over!", 350, 200)
-        love.graphics.print("Your score: " .. score, 350, 250)
+        if gameOver == false then
+            love.graphics.draw(background,0,0)
+            love.graphics.draw(player.graphic, player.xpos, player.ypos)
+            for i, bullet in ipairs(aliveBullets) do
+                love.graphics.draw(bulletInfo.graphic, bullet.xpos, bullet.ypos)
+            end
+            for j, enemy in ipairs(aliveEnemies) do
+                love.graphics.draw(enemy.graphic, enemy.xpos, enemy.ypos)
+            end
+            love.graphics.print("Score: " .. score, 400, 50)
+        else
+            love.graphics.print("Game over!", 350, 200)
+            love.graphics.print("Your score: " .. score, 350, 250)
+        end
     end
-
 end
 
 function love.load()
-
+    loadAudio()
+    createPlayer()
+    love.audio.play(stSound)
 end
