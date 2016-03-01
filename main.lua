@@ -7,25 +7,28 @@
 
 
 -- attributes for player-fired bullets
-bulletInfo = {}
-bulletInfo["graphic"] = love.graphics.newImage("bullet.png")
+local bulletInfo = {}
+bulletInfo["graphic"] = love.graphics.newImage("assets/bullet.png")
 bulletInfo["movementSpeed"] = 10
 
-background = love.graphics.newImage("assets/background.png")
+local background = love.graphics.newImage("assets/background.png")
+
+local enemyTemplate = require("data.enemies")
+local levelTemplate = require("data.levels")
 
 -- Store bullets and enemies to iterate through for updating/drawing
-aliveBullets = {}
-aliveEnemies = {}
+local aliveBullets = {}
+local aliveEnemies = {}
 
 -- Main menu --------------------------------------------------------------------------------------------
 
-menuStartGame = {}
+local menuStartGame = {}
 menuStartGame['text'] = "Start Game"
 menuStartGame['action'] = function() gameState = 2 end
-menuExitGame = {}
+local menuExitGame = {}
 menuExitGame['text'] = "Exit Game"
 menuExitGame['action'] = function() love.event.quit() end
-menu = {}
+local menu = {}
 menu['selectedItem'] = 1
 menu['updateCooldown'] = 0.5
 menu[1] = menuStartGame
@@ -33,13 +36,14 @@ menu[2] = menuExitGame
 
 -- Game-wide variables ---------------------------------------------------------------------------------
 
-score = 0
-lives = 5
+local score = 0
+local lives = 5
 
 gameState = 1
 gameOver = false
 
 -- Menu activities
+
 
 function updateMenu(delta)
     if menu.updateCooldown > 0 then
@@ -65,7 +69,7 @@ function mainMenu()
 end
 
 function createPlayer()
-    player = {}
+    local player = {}
     player["graphic"] = love.graphics.newImage("assets/player.png")
     player["xpos"] = 150
     player["ypos"] = 420
@@ -74,8 +78,8 @@ function createPlayer()
 end
 
 function loadAudio()
-    shootSound = love.audio.newSource("shoot.wav")
-    stSound = love.audio.newSource("soundTrack.mp3")
+    shootSound = love.audio.newSource("assets/shoot.wav")
+    stSound = love.audio.newSource("assets/soundTrack.mp3")
     stSound:setVolume(0.15)
     stSound:setLooping(true)
 end
@@ -84,14 +88,13 @@ end
 -- Shooting activities ------------------------------------------------------------------------------
 function fireBullet()
     if (player.shotCooldown == 0) then
-        bullet = {}
+        local bullet = {}
         bullet['xpos'] = player.xpos
         bullet['ypos'] = player.ypos
         table.insert(aliveBullets, bullet)
         player.shotCooldown = 0.25
         love.audio.play(shootSound)
     end
-
 end
 
 function checkHit(bulletX, bulletY, unitX, unitY)
@@ -99,7 +102,7 @@ function checkHit(bulletX, bulletY, unitX, unitY)
 end
 
 function spawnEnemy()
-    enemy = {}
+    local enemy = {}
     enemy['graphic'] = love.graphics.newImage("assets/enemyTank.png")
     enemy['xpos'] = math.random(450) + 175
     enemy['ypos'] = math.random(175)
