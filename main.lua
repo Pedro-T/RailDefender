@@ -1,9 +1,8 @@
 --
 -- Author: Pedro Teixeira
 -- Date: 3/2/2016
+-- Version: 0.2
 --
-
--- player "object" for organization - this table holds all info relevant to the player
 
 
 -- attributes for player-fired bullets
@@ -45,6 +44,7 @@ gameOver = false
 currentLevel = 1
 intermissionTimer = 0
 gameOverConditionWin = true
+local spawnerCooldown = 0
 
 -- Menu activities
 
@@ -133,7 +133,6 @@ function spawnEnemy()
     table.insert(aliveEnemies, enemy)
 end
 
-
 function loseLife()
     score = score - 250
     lives = lives - 1
@@ -204,9 +203,11 @@ function love.update(delta)
         movePlayer(delta)
         moveEnemies(delta)
         updateBullets()
-        if (math.random(100) > 80 and table.getn(aliveEnemies) < 11) then
+        if spawnerCooldown <= 0 then
             spawnEnemy()
+            spawnerCooldown = levelTemplate[currentLevel].enemySpawnIntervalMax
         end
+    spawnerCooldown = spawnerCooldown - delta
     elseif gameState == 3 then -- level intermission
         intermissionTimer = intermissionTimer - delta
         if intermissionTimer <= 0 then gameState = 2 end
@@ -214,6 +215,7 @@ function love.update(delta)
     if lives == 0 then
         gameState = 5
     end
+
 end
 
 function love.draw()

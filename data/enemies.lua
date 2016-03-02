@@ -1,12 +1,12 @@
 --
 -- Author: Pedro Teixeira
--- Date: 3/1/2016
+-- Date: 3/2/2016
 --
 enemies = {}
 
 apc = {}
 apc['graphic'] = "assets/apc.png"
-apc['movementSpeed'] = 10
+apc['movementSpeed'] = 20
 apc['hitpoints'] = 1
 apc['shootsAtPlayer'] = false
 

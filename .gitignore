@@ -6,6 +6,11 @@ luac.out
 *.zip
 *.tar.gz
 
+.idea
+.png
+.jpg
+.mp3
+
 # Object files
 *.o
 *.os
