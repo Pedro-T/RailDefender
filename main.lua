@@ -1,6 +1,6 @@
 --
 -- Author: Pedro Teixeira
--- Date: 2/26/2016
+-- Date: 3/2/2016
 --
 
 -- player "object" for organization - this table holds all info relevant to the player
@@ -120,12 +120,16 @@ end
 function spawnEnemy()
     local enemyIndex = math.random(levelTemplate[currentLevel].enemyBoundA, levelTemplate[currentLevel].enemyBoundB)
     local enemy = {}
-    enemy['graphic'] = love.graphics.newImage("assets/enemyTank.png")
+    enemy['graphic'] = love.graphics.newImage(enemyTemplate[enemyIndex].graphic)
     enemy['xpos'] = math.random(450) + 175
-    enemy['ypos'] = math.random(175)
-    enemy['movementSpeed'] = 25
-    enemy['shotCooldown'] = 1
+    enemy['ypos'] = -30
+    enemy['movementSpeed'] = enemyTemplate[enemyIndex].movementSpeed
+    enemy['shootsAtPlayer'] = enemyTemplate[enemyIndex].shootsAtPlayer
+    if enemy.shootsAtPlayer then
+        enemy['shotCooldown'] = enemyTemplate[enemyIndex].shotCooldown
+    end
     enemy['pointValue'] = 25
+    enemy['hitpoints'] = enemyTemplate[enemyIndex].hitpoints
     table.insert(aliveEnemies, enemy)
 end
 
@@ -166,10 +170,13 @@ function updateBullets()
         end
         for j, enemy in ipairs(aliveEnemies) do
             if checkHit(bullet.xpos, bullet.ypos, enemy.xpos, enemy.ypos) then
-                table.remove(aliveEnemies, j)
-                deadEnemies = deadEnemies + 1
+                enemy.hitpoints = enemy.hitpoints - 1
+                if enemy.hitpoints <= 0 then
+                    table.remove(aliveEnemies, j)
+                    deadEnemies = deadEnemies + 1
+                    score = score + enemy.pointValue
+                end
                 table.remove(aliveBullets, i)
-                score = score + enemy.pointValue
             end
         end
     end
