@@ -7,7 +7,7 @@
 
 -- attributes for player-fired bullets
 local bulletInfo = {}
-bulletInfo["graphic"] = love.graphics.newImage("assets/bullet.png")
+bulletInfo["graphic"] = love.graphics.newImage("assets/playerBullet.png")
 bulletInfo["movementSpeed"] = 10
 
 local background = love.graphics.newImage("assets/background.png")
@@ -105,7 +105,7 @@ end
 function fireBullet()
     if (player.shotCooldown == 0) then
         local bullet = {}
-        bullet['xpos'] = player.xpos
+        bullet['xpos'] = player.xpos + (player.graphic:getWidth()/2 - bulletInfo.graphic:getWidth() / 2)
         bullet['ypos'] = player.ypos
         table.insert(aliveBullets, bullet)
         player.shotCooldown = 0.25
@@ -113,8 +113,8 @@ function fireBullet()
     end
 end
 
-function checkHit(bulletX, bulletY, unitX, unitY)
-    return ((bulletX < unitX + 32) and (bulletX + 32 > unitX) and (bulletY < unitY + 32) and (bulletY + 32 > unitY))
+function checkHit(bullet, unit)
+    return ((bullet.xpos < unit.xpos + unit.graphic:getWidth()) and (bullet.xpos + bulletInfo.graphic:getWidth() > unit.xpos) and (bullet.ypos < unit.ypos + unit.graphic:getWidth()) and (bullet.ypos + bulletInfo.graphic:getWidth() > unit.ypos))
 end
 
 function spawnEnemy()
@@ -168,7 +168,7 @@ function updateBullets()
             table.remove(aliveBullets, i)
         end
         for j, enemy in ipairs(aliveEnemies) do
-            if checkHit(bullet.xpos, bullet.ypos, enemy.xpos, enemy.ypos) then
+            if checkHit(bullet, enemy) then
                 enemy.hitpoints = enemy.hitpoints - 1
                 if enemy.hitpoints <= 0 then
                     table.remove(aliveEnemies, j)
