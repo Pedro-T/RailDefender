@@ -4,6 +4,7 @@
 -- Version: 0.2
 --
 
+local anim8 = require("lib/anim8/anim8")
 
 -- attributes for player-fired bullets
 local bulletInfo = {}
@@ -18,6 +19,7 @@ local levelTemplate = require("data.levels")
 -- Store bullets and enemies to iterate through for updating/drawing
 local aliveBullets = {}
 local aliveEnemies = {}
+local effects = {}
 
 -- Main menu --------------------------------------------------------------------------------------------
 
@@ -114,15 +116,19 @@ function fireBullet()
 end
 
 function checkHit(bullet, unit)
-    return ((bullet.xpos < unit.xpos + unit.graphic:getWidth()) and (bullet.xpos + bulletInfo.graphic:getWidth() > unit.xpos) and (bullet.ypos < unit.ypos + unit.graphic:getWidth()) and (bullet.ypos + bulletInfo.graphic:getWidth() > unit.ypos))
+    return ((bullet.xpos < unit.xpos + unit.xSize) and (bullet.xpos + bulletInfo.graphic:getWidth() > unit.xpos) and (bullet.ypos < unit.ypos + unit.ySize) and (bullet.ypos + bulletInfo.graphic:getWidth() > unit.ypos))
 end
 
 function spawnEnemy()
     local enemyIndex = math.random(levelTemplate[currentLevel].enemyBoundA, levelTemplate[currentLevel].enemyBoundB)
     local enemy = {}
-    enemy['graphic'] = love.graphics.newImage(enemyTemplate[enemyIndex].graphic)
+    enemy['animation'] = enemyTemplate[enemyIndex].moveAnimation:clone()
+    enemy['spriteSheet'] = enemyTemplate[enemyIndex].spriteSheet
     enemy['xpos'] = math.random(450) + 175
+    enemy.deathAnimation = enemyTemplate[enemyIndex].deathAnimation
     enemy['ypos'] = -30
+    enemy['xSize'] = enemyTemplate[enemyIndex].xSize
+    enemy['ySize'] = enemyTemplate[enemyIndex].ySize
     enemy['movementSpeed'] = enemyTemplate[enemyIndex].movementSpeed
     enemy['shootsAtPlayer'] = enemyTemplate[enemyIndex].shootsAtPlayer
     if enemy.shootsAtPlayer then
@@ -174,6 +180,12 @@ function updateBullets()
                     table.remove(aliveEnemies, j)
                     deadEnemies = deadEnemies + 1
                     score = score + enemy.pointValue
+                    local effect = {}
+                    effect.animation = enemy.deathAnimation:clone()
+                    effect.spriteSheet = enemy.spriteSheet
+                    effect.xpos = enemy.xpos
+                    effect.ypos = enemy.ypos
+                    table.insert(effects, effect)
                 end
                 table.remove(aliveBullets, i)
             end
@@ -184,6 +196,7 @@ end
 function moveEnemies(delta)
     for i, enemy in ipairs(aliveEnemies) do
         enemy.ypos = enemy.ypos + (enemy.movementSpeed * delta)
+        enemy.animation:update(delta)
         if enemy.ypos > 600 then
             table.remove(aliveEnemies, i)
             loseLife()
@@ -207,6 +220,9 @@ function love.update(delta)
             spawnEnemy()
             spawnerCooldown = levelTemplate[currentLevel].enemySpawnIntervalMax
         end
+        for i, effect in ipairs(effects) do
+            effect.animation:update(delta)
+        end
     spawnerCooldown = spawnerCooldown - delta
     elseif gameState == 3 then -- level intermission
         intermissionTimer = intermissionTimer - delta
@@ -229,7 +245,10 @@ function love.draw()
                 love.graphics.draw(bulletInfo.graphic, bullet.xpos, bullet.ypos)
             end
             for j, enemy in ipairs(aliveEnemies) do
-                love.graphics.draw(enemy.graphic, enemy.xpos, enemy.ypos)
+                enemy.animation:draw(enemy.spriteSheet, enemy.xpos, enemy.ypos)
+            end
+            for k, effect in ipairs(effects) do
+                effect.animation:draw(effect.spriteSheet, effect.xpos, effect.ypos)
             end
             love.graphics.print("Score: " .. score, 400, 50)
             love.graphics.print("Level: " .. currentLevel, 400, 65)
