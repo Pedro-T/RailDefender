@@ -1,6 +1,6 @@
 --
 -- Author: Pedro Teixeira
--- Date: 3/2/2016
+-- Date: 3/11/2016
 --
 
 local anim8 = require("lib/anim8/anim8")
@@ -9,25 +9,37 @@ local enemies = {}
 
 local apc = {}
 apc['spriteSheet'] = love.graphics.newImage("assets/apc_sheet.png")
-apc['animationGrid'] = anim8.newGrid(12, 15, apc.spriteSheet:getWidth(), apc.spriteSheet:getHeight())
+apc['xSize'] = 12
+apc['ySize'] = 15
+apc['animationGrid'] = anim8.newGrid(apc.xSize, apc.ySize, apc.spriteSheet:getWidth(), apc.spriteSheet:getHeight())
 apc['moveAnimation'] = anim8.newAnimation(apc.animationGrid('1-4', 1), 0.3)
-apc['deathAnimation'] = anim8.newAnimation(apc.animationGrid('1-4', 2), 0.3)
+apc['deathAnimation'] = anim8.newAnimation(apc.animationGrid('1-5', 2), 0.2)
 apc.deathAnimation.onLoop = "pauseAtEnd"
 apc['movementSpeed'] = 45
 apc['hitpoints'] = 1
-apc['xSize'] = 12
-apc['ySize'] = 15
 apc['shootsAtPlayer'] = false
 
 local tank = {}
-tank['graphic'] = "assets/tank.png"
+tank['spriteSheet'] = love.graphics.newImage("assets/tank_sheet.png")
+tank['xSize'] = 24
+tank['ySize'] = 32
+tank['animationGrid'] = anim8.newGrid(tank.xSize, tank.ySize, tank.spriteSheet:getWidth(), tank.spriteSheet:getHeight())
+tank['moveAnimation'] = anim8.newAnimation(tank.animationGrid('1-4', 1), 0.4)
+tank['deathAnimation'] = anim8.newAnimation(tank.animationGrid('1-5', 2), 0.2)
+tank.deathAnimation.onLoop = "pauseAtEnd"
 tank['movementSpeed'] = 25
 tank['hitpoints'] = 2
 tank['shootsAtPlayer'] = true
 tank['shotCooldown'] = 1.5
 
 local superTank = {}
-superTank['graphic'] = "assets/superTank.png"
+superTank['graphic'] = love.graphics.newImage("assets/superTank_sheet.png")
+superTank['xSize'] = 32
+superTank['ySize'] = 40
+superTank['animationGrid'] = anim8.newGrid(superTank.xSize, superTank.ySize, superTank.spriteSheet:getWidth(), superTank.spriteSheet:getHeight())
+superTank['moveAnimation'] = superTank.newAnimation(superTank.animationGrid('1-4', 1), 0.4)
+superTank['deathAnimation'] = superTank.newAnimation(superTank.animationGrid('1-5', 2), 0.2)
+superTank.deathAnimation.onLoop = "pauseAtEnd"
 superTank['movementSpeed'] = 15
 superTank['hitpoints'] = 5
 superTank['shootsAtPlayer'] = true

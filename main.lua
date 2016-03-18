@@ -1,7 +1,7 @@
 --
 -- Author: Pedro Teixeira
--- Date: 3/2/2016
--- Version: 0.2
+-- Date: 3/11/2016
+-- Version: 0.4
 --
 
 local anim8 = require("lib/anim8/anim8")
@@ -65,14 +65,15 @@ function updateMenu(delta)
    end
 end
 
-function advanceLevel(level)
-    if not level == 4 then
+function advanceLevel()
+    if currentLevel == 4 then
+        gameState = 4;
+    else
+        clearEnemies()
         currentLevel = currentLevel + 1
         intermissionTimer = 5
         gameState = 3
-        --enemiesDestroyed = 0
-    else
-        gameState = 4
+        enemiesDestroyed = 0
     end
 end
 
@@ -204,6 +205,13 @@ function moveEnemies(delta)
     end
 end
 
+function clearEnemies()
+    count = #aliveEnemies
+    for i=0, count do
+        aliveEnemies[i] = nil
+    end
+end
+
 -- Engine called functions -------------------------------------------------------------------------------
 
 function love.update(delta)
@@ -211,7 +219,7 @@ function love.update(delta)
         updateMenu(delta)
     elseif gameState == 2 then -- we're playing the game
         if (deadEnemies >= levelTemplate[currentLevel].enemyCount) then
-            advanceLevel(currentLevel)
+            advanceLevel()
         end
         movePlayer(delta)
         moveEnemies(delta)
@@ -226,7 +234,9 @@ function love.update(delta)
     spawnerCooldown = spawnerCooldown - delta
     elseif gameState == 3 then -- level intermission
         intermissionTimer = intermissionTimer - delta
-        if intermissionTimer <= 0 then gameState = 2 end
+        if intermissionTimer <= 0 then
+            gameState = 2
+        end
     end
     if lives == 0 then
         gameState = 5
