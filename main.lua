@@ -32,6 +32,12 @@ local effects = {}
 local menuStartGame = {}
 menuStartGame['text'] = "Start Game"
 menuStartGame['action'] = function() gameState = 2 end
+local menuCredits  = {}
+menuCredits['text'] = "Credits"
+menuCredits['action'] = function()
+    love.audio.pause()
+    gameState = 6
+end
 local menuExitGame = {}
 menuExitGame['text'] = "Exit Game"
 menuExitGame['action'] = function() love.event.quit() end
@@ -39,7 +45,8 @@ local menu = {}
 menu['selectedItem'] = 1
 menu['updateCooldown'] = 0.5
 menu[1] = menuStartGame
-menu[2] = menuExitGame
+menu[2] = menuCredits
+menu[3] = menuExitGame
 
 -- Game-wide variables ---------------------------------------------------------------------------------
 
@@ -313,9 +320,12 @@ function love.draw()
     elseif gameState == 4 then
         love.graphics.print("Victory!", 350, 200)
         love.graphics.print("Your score: " .. score, 350, 250)
-    else
+    elseif gameState == 5 then
         love.graphics.print("Game over! You lose!", 350, 200)
         love.graphics.print("Your score: " .. score, 350, 250)
+    elseif gameState == 6 then
+        love.graphics.print("Credits", 50, 100)
+        love.graphics.print("Code: Pedro Teixeira\nArt: Pedro Teixeira\nMusic: Jay Man (Check out more at ourmusicbox.com)\nLove2D Framework: Rude (love2d.org)\nAnim8 library: Kikito (github.com/kikito/anim8)", 50, 150)
     end
 end
 
