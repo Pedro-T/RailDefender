@@ -1,15 +1,18 @@
 --
 -- Author: Pedro Teixeira
--- Date: 3/11/2016
--- Version: 0.4
+-- Date: 3/20/2016
 --
-
-local anim8 = require("lib/anim8/anim8")
 
 -- attributes for player-fired bullets
 local bulletInfo = {}
 bulletInfo["graphic"] = love.graphics.newImage("assets/playerBullet.png")
-bulletInfo["movementSpeed"] = 10
+bulletInfo["movementSpeed"] = 5
+
+local gameState = 1
+gameOver = false
+currentLevel = 1
+intermissionTimer = 0
+gameOverConditionWin = true
 
 local background = love.graphics.newImage("assets/background.png")
 
@@ -41,11 +44,7 @@ local score = 0
 local lives = 5
 local deadEnemies = 0
 
-gameState = 1
-gameOver = false
-currentLevel = 1
-intermissionTimer = 0
-gameOverConditionWin = true
+
 local spawnerCooldown = 0
 
 -- Menu activities
@@ -67,13 +66,13 @@ end
 
 function advanceLevel()
     if currentLevel == 4 then
-        gameState = 4;
+        gameState = 4
     else
         clearEnemies()
         currentLevel = currentLevel + 1
         intermissionTimer = 5
         gameState = 3
-        enemiesDestroyed = 0
+        deadEnemies = 0
     end
 end
 
@@ -206,7 +205,7 @@ function moveEnemies(delta)
 end
 
 function clearEnemies()
-    count = #aliveEnemies
+    local count = #aliveEnemies
     for i=0, count do
         aliveEnemies[i] = nil
     end
