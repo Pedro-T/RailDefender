@@ -18,6 +18,7 @@ apc.deathAnimation.onLoop = "pauseAtEnd"
 apc['movementSpeed'] = 45
 apc['hitpoints'] = 1
 apc['shootsAtPlayer'] = false
+apc['hasAccuarateFire'] = false
 
 local tank = {}
 tank['spriteSheet'] = love.graphics.newImage("assets/tank_sheet.png")
@@ -29,8 +30,11 @@ tank['deathAnimation'] = anim8.newAnimation(tank.animationGrid('1-5', 2), 0.2)
 tank.deathAnimation.onLoop = "pauseAtEnd"
 tank['movementSpeed'] = 25
 tank['hitpoints'] = 2
+tank['bulletSpeed'] = 75
 tank['shootsAtPlayer'] = true
-tank['shotCooldown'] = 1.5
+tank['shotCooldown'] = 3
+tank['shotInterval'] = 6
+tank['hasAccuarateFire'] = false
 
 local superTank = {}
 superTank['spriteSheet'] = love.graphics.newImage("assets/superTank_sheet.png")
@@ -43,7 +47,8 @@ superTank.deathAnimation.onLoop = "pauseAtEnd"
 superTank['movementSpeed'] = 15
 superTank['hitpoints'] = 5
 superTank['shootsAtPlayer'] = true
-superTank['shotCooldown'] = 0.75
+superTank['shotInterval'] = 10
+superTank['hasAccuarateFire'] = true
 
 local boss = {}
 boss['graphic'] = "assets/boss.png"

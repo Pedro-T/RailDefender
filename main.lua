@@ -6,11 +6,13 @@
 -- attributes for player-fired bullets
 local bulletInfo = {}
 bulletInfo["graphic"] = love.graphics.newImage("assets/playerBullet.png")
-bulletInfo["movementSpeed"] = 5
+bulletInfo["movementSpeed"] = 300
+
+local tankShotGraphic = love.graphics.newImage("assets/tankShot.png")
 
 local gameState = 1
 gameOver = false
-currentLevel = 1
+local currentLevel = 2
 intermissionTimer = 0
 gameOverConditionWin = true
 
@@ -22,6 +24,7 @@ local levelTemplate = require("data.levels")
 -- Store bullets and enemies to iterate through for updating/drawing
 local aliveBullets = {}
 local aliveEnemies = {}
+local aliveEnemyBullets = {}
 local effects = {}
 
 -- Main menu --------------------------------------------------------------------------------------------
@@ -66,7 +69,7 @@ end
 
 function advanceLevel()
     if currentLevel == 4 then
-        gameState = 4
+        gameState = 3
     else
         clearEnemies()
         currentLevel = currentLevel + 1
@@ -90,6 +93,8 @@ function createPlayer()
     player["graphic"] = love.graphics.newImage("assets/player.png")
     player["xpos"] = 150
     player["ypos"] = 420
+    player['xSize'] = 32
+    player['ySize'] = 32
     player["movementSpeed"] = 150
     player['shotCooldown'] = 0.25
     return player
@@ -115,6 +120,27 @@ function fireBullet()
     end
 end
 
+function fireEnemyBullet(enemy, delta)
+    if enemy.shotCooldown <= 0 then
+        local bullet = {}
+        bullet['xpos'] = enemy.xpos
+        bullet['ypos'] = enemy.ypos
+        bullet['graphic'] = tankShotGraphic
+        if enemy.hasAccurateFire then
+            local angle = math.atan((player.ypos + player.width / 2) - (enemy.ypos + enemy.width / 2), (player.xpos + player.width / 2) - (enemy.xpos + enemy.width / 2))
+            bullet['dx'] = enemy.bulletSpeed * math.cos(angle)
+            bullet['dy'] = enemy.bulletSpeed * math.sin(angle)
+        else
+            bullet['dx'] = 0
+            bullet['dy'] = enemy.bulletSpeed
+        end
+        table.insert(aliveEnemyBullets, bullet)
+        enemy.shotCooldown = enemy.shotInterval
+    else
+        enemy.shotCooldown = enemy.shotCooldown - delta
+    end
+end
+
 function checkHit(bullet, unit)
     return ((bullet.xpos < unit.xpos + unit.xSize) and (bullet.xpos + bulletInfo.graphic:getWidth() > unit.xpos) and (bullet.ypos < unit.ypos + unit.ySize) and (bullet.ypos + bulletInfo.graphic:getWidth() > unit.ypos))
 end
@@ -128,11 +154,13 @@ function spawnEnemy()
     enemy.deathAnimation = enemyTemplate[enemyIndex].deathAnimation
     enemy['ypos'] = -30
     enemy['xSize'] = enemyTemplate[enemyIndex].xSize
+    enemy['bulletSpeed'] = enemyTemplate[enemyIndex].bulletSpeed
     enemy['ySize'] = enemyTemplate[enemyIndex].ySize
     enemy['movementSpeed'] = enemyTemplate[enemyIndex].movementSpeed
     enemy['shootsAtPlayer'] = enemyTemplate[enemyIndex].shootsAtPlayer
     if enemy.shootsAtPlayer then
-        enemy['shotCooldown'] = enemyTemplate[enemyIndex].shotCooldown
+        enemy['shotInterval'] = enemyTemplate[enemyIndex].shotInterval
+        enemy['shotCooldown'] = 3
     end
     enemy['pointValue'] = 25
     enemy['hitpoints'] = enemyTemplate[enemyIndex].hitpoints
@@ -167,9 +195,9 @@ function movePlayer(delta)
     end
 end
 
-function updateBullets()
+function updateBullets(delta)
     for i, bullet in ipairs(aliveBullets) do
-        aliveBullets[i].ypos = aliveBullets[i].ypos - bulletInfo.movementSpeed
+        aliveBullets[i].ypos = aliveBullets[i].ypos - (bulletInfo.movementSpeed * delta)
         if (bullet.ypos < -10) then
             table.remove(aliveBullets, i)
         end
@@ -191,6 +219,17 @@ function updateBullets()
             end
         end
     end
+    for k, bullet in ipairs(aliveEnemyBullets) do
+        bullet.xpos = bullet.xpos + (bullet.dx * delta)
+        bullet.ypos = bullet.ypos + (bullet.dy * delta)
+        if (bullet.ypos < -10) then
+            table.remove(aliveEnemyBullets, k)
+        end
+        if (checkHit(bullet, player)) then
+            loseLife()
+            table.remove(aliveEnemyBullets, k)
+        end
+    end
 end
 
 function moveEnemies(delta)
@@ -200,6 +239,8 @@ function moveEnemies(delta)
         if enemy.ypos > 600 then
             table.remove(aliveEnemies, i)
             loseLife()
+        elseif enemy.shootsAtPlayer then fireEnemyBullet(enemy, delta)
+
         end
     end
 end
@@ -222,7 +263,7 @@ function love.update(delta)
         end
         movePlayer(delta)
         moveEnemies(delta)
-        updateBullets()
+        updateBullets(delta)
         if spawnerCooldown <= 0 then
             spawnEnemy()
             spawnerCooldown = levelTemplate[currentLevel].enemySpawnIntervalMax
@@ -258,6 +299,9 @@ function love.draw()
             end
             for k, effect in ipairs(effects) do
                 effect.animation:draw(effect.spriteSheet, effect.xpos, effect.ypos)
+            end
+            for l, bullet in ipairs(aliveEnemyBullets) do
+                love.graphics.draw(bullet.graphic, bullet.xpos, bullet.ypos)
             end
             love.graphics.print("Score: " .. score, 400, 50)
             love.graphics.print("Level: " .. currentLevel, 400, 65)
