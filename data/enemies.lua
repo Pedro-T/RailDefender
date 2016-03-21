@@ -19,6 +19,7 @@ apc['movementSpeed'] = 45
 apc['hitpoints'] = 1
 apc['shootsAtPlayer'] = false
 apc['hasAccuarateFire'] = false
+apc.pointValue = 5
 
 local tank = {}
 tank['spriteSheet'] = love.graphics.newImage("assets/tank_sheet.png")
@@ -36,6 +37,7 @@ tank['shootsAtPlayer'] = true
 tank['shotCooldown'] = 3
 tank['shotInterval'] = 6
 tank['hasAccuarateFire'] = false
+tank.pointValue = 10
 
 local superTank = {}
 superTank['spriteSheet'] = love.graphics.newImage("assets/superTank_sheet.png")

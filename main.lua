@@ -117,23 +117,11 @@ end
 local function spawnEnemy()
     local enemyIndex = math.random(levelTemplate[game.currentLevel].enemyBoundA, levelTemplate[game.currentLevel].enemyBoundB)
     local enemy = {}
-    enemy['animation'] = enemyTemplate[enemyIndex].moveAnimation:clone()
-    enemy['spriteSheet'] = enemyTemplate[enemyIndex].spriteSheet
-    enemy['xpos'] = math.random(450) + 175
-    enemy.deathAnimation = enemyTemplate[enemyIndex].deathAnimation
-    enemy['ypos'] = -30
-    enemy['xSize'] = enemyTemplate[enemyIndex].xSize
-    enemy['ySize'] = enemyTemplate[enemyIndex].ySize
-    enemy['movementSpeed'] = enemyTemplate[enemyIndex].movementSpeed
-    enemy['shootsAtPlayer'] = enemyTemplate[enemyIndex].shootsAtPlayer
-    enemy.bulletSpeed = enemyTemplate[enemyIndex].bulletSpeed
-    enemy.bulletGraphic = enemyTemplate[enemyIndex].bulletGraphic
-    if enemy.shootsAtPlayer then
-        enemy['shotInterval'] = enemyTemplate[enemyIndex].shotInterval
-        enemy['shotCooldown'] = 3
+    for key, value in pairs(enemyTemplate[enemyIndex]) do
+        enemy[key] = value
     end
-    enemy['pointValue'] = 25
-    enemy['hitpoints'] = enemyTemplate[enemyIndex].hitpoints
+    enemy['xpos'] = math.random(450) + 175
+    enemy['ypos'] = -30
     table.insert(game.aliveEnemies, enemy)
 end
 
@@ -164,10 +152,10 @@ end
 local function moveEnemies(delta)
     for i, enemy in ipairs(game.aliveEnemies) do
         enemy.ypos = enemy.ypos + (enemy.movementSpeed * delta)
-        enemy.animation:update(delta)
+        enemy.moveAnimation:update(delta)
         if enemy.ypos > 600 then
             table.remove(game.aliveEnemies, i)
-            loseLife()
+            player.loseLife()
         elseif enemy.shootsAtPlayer then bullets.fireEnemyBullet(player, enemy, delta)
 
         end
@@ -219,7 +207,7 @@ function love.draw()
                 love.graphics.draw(bullets.playerBullet.graphic, bullet.xpos, bullet.ypos)
             end
             for j, enemy in ipairs(game.aliveEnemies) do
-                enemy.animation:draw(enemy.spriteSheet, enemy.xpos, enemy.ypos)
+                enemy.moveAnimation:draw(enemy.spriteSheet, enemy.xpos, enemy.ypos)
             end
             for k, effect in ipairs(game.effects) do
                 effect.animation:draw(effect.spriteSheet, effect.xpos, effect.ypos)
