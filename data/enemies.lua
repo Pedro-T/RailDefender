@@ -31,6 +31,7 @@ tank.deathAnimation.onLoop = "pauseAtEnd"
 tank['movementSpeed'] = 25
 tank['hitpoints'] = 2
 tank['bulletSpeed'] = 75
+tank.bulletGraphic = love.graphics.newImage("assets/tankShot.png")
 tank['shootsAtPlayer'] = true
 tank['shotCooldown'] = 3
 tank['shotInterval'] = 6
