@@ -1,53 +1,63 @@
 --
--- User: Pedro
--- Date: 3/2/2016
+-- Author: Pedro Teixeira
+-- Date: 3/25/2016
 --
 
-levels = {}
+levels = {
+    {
+        name="Day One",
+        enemyBoundA=1,
+        enemyBoundB=1,
+        enemyCount=10,
+        enemySpawnIntervalMin=1,
+        enemySpawnIntervalMax=0.5,
+        leftBuddyPresent=true,
+        rightBuddyPresent=true
+    },
 
-stage1 = {}
-stage1['name'] = "Day One"
-stage1['enemyBoundA'] = 1
-stage1['enemyBoundB'] = 1
-stage1['enemyCount'] = 10
-stage1['enemySpawnIntervalMin'] = 1
-stage1['enemySpawnIntervalMax'] = 1
-stage1['leftBuddyPresent'] = true
-stage1['rightBuddyPresent'] = true
+    {
+        name="Day Two",
+        enemyBoundA=1,
+        enemyBoundB=2,
+        enemyCount=60,
+        enemySpawnIntervalMin=1,
+        enemySpawnIntervalMax=0.5,
+        leftBuddyPresent=true,
+        rightBuddyPresent=true
+    },
 
-stage2 = {}
-stage2['name'] = "Day Two"
-stage2['enemyBoundA'] = 1
-stage2['enemyBoundB'] = 2
-stage2['enemyCount'] = 60
-stage2['enemySpawnIntervalMin'] = 1
-stage2['enemySpawnIntervalMax'] = 0.5
-stage2['leftBuddyPresent'] = true
-stage2['rightBuddyPresent'] = false
+    {
+        name="Day Three",
+        enemyBoundA=1,
+        enemyBoundB=2,
+        enemyCount=80,
+        enemySpawnIntervalMin=0.5,
+        enemySpawnIntervalMax=0.5,
+        leftBuddyPresent=true,
+        rightBuddyPresent=false
+    },
 
-stage3 = {}
-stage3['name'] = "Day Three"
-stage3['enemyBoundA'] = 1
-stage3['enemyBoundB'] = 2
-stage3['enemyCount'] = 80
-stage3['enemySpawnIntervalMin'] = 1
-stage3['enemySpawnIntervalMax'] = 0.5
-stage3['leftBuddyPresent'] = false
-stage3['rightBuddyPresent'] = false
+    {
+        name="Day Four",
+        enemyBoundA=1,
+        enemyBoundB=3,
+        enemyCount=90,
+        enemySpawnIntervalMin=1,
+        enemySpawnIntervalMax=0.5,
+        leftBuddyPresent=false,
+        rightBuddyPresent=false
+    },
 
-stage4 = {}
-stage4['name'] = "Day Four"
-stage4['enemyBoundA'] = 1
-stage4['enemyBoundB'] = 3
-stage4['enemyCount'] = 40
-stage4['enemySpawnIntervalMin'] = 1
-stage4['enemySpawnIntervalMax'] = 0.5
-stage4['leftBuddyPresent'] = false
-stage4['rightBuddyPresent'] = false
-
-table.insert(levels, stage1)
-table.insert(levels, stage2)
-table.insert(levels, stage3)
-table.insert(levels, stage4)
+    {
+        name="Day Five",
+        enemyBoundA=1,
+        enemyBoundB=3,
+        enemyCount=140,
+        enemySpawnIntervalMin=1,
+        enemySpawnIntervalMax=0.5,
+        leftBuddyPresent=false,
+        rightBuddyPresent=false
+    }
+}
 
 return levels

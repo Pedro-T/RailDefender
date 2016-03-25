@@ -1,6 +1,6 @@
 --
 -- Author: Pedro Teixeira
--- Date: 3/20/2016
+-- Date: 3/25/2016
 --
 
 local bullets = require("bullets")
@@ -23,16 +23,14 @@ game['score'] = 0
 game['deadEnemies'] = 0
 game['spawnerCooldown'] = 0
 game['gameState'] = 1
-game['currentLevel'] = 2
+game['currentLevel'] = 1
 game['intermissionTimer'] = 0
 game['gameOver'] = false
 game.effects = {}
 
 local background = love.graphics.newImage("assets/background.png")
 
-
-
--- Store bullets and enemies to iterate through for updating/drawing
+-- Store enemies to iterate through for updating/drawing
 game.aliveEnemies = {}
 
 -- Main menu --------------------------------------------------------------------------------------------
@@ -230,7 +228,7 @@ function love.draw()
         love.graphics.print("Your score: " .. game.score, 350, 250)
     elseif game.gameState == 6 then
         love.graphics.print("Credits", 50, 100)
-        love.graphics.print("Code: Pedro Teixeira\nArt: Pedro Teixeira\nMusic: Jay Man (Check out more at ourmusicbox.com)\nLove2D Framework: Rude (love2d.org)\nAnim8 library: Kikito (github.com/kikito/anim8)", 50, 150)
+        love.graphics.print("Code: Pedro Teixeira\nArt: Pedro Teixeira\nMusic: Jay Man (Check out more at ourmusicbox.com)\nLove2D Framework: Rude (love2d.org) (ZLIB)\nAnim8 library: Kikito (github.com/kikito/anim8) (MIT License)", 50, 150)
     end
 end
 

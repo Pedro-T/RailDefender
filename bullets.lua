@@ -1,5 +1,6 @@
 --
--- User: Pedro
+-- Author: Pedro Teixeira
+-- Date: 3/25/16
 --
 
 local bullets = {}
