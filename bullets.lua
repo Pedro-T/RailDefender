@@ -1,6 +1,6 @@
 --
 -- Author: Pedro Teixeira
--- Date: 3/25/16
+-- Date: 4/8/2016
 --
 
 local bullets = {}
@@ -30,9 +30,9 @@ end
 bullets.fireEnemyBullet = function (player, enemy, delta)
     if enemy.shotCooldown <= 0 then
         local bullet = {}
-        bullet['xpos'] = enemy.xpos
-        bullet['ypos'] = enemy.ypos
         bullet['graphic'] = enemy.bulletGraphic
+        bullet['xpos'] = enemy.xpos + (enemy.xSize/2 - bullet.graphic:getWidth() / 2)
+        bullet['ypos'] = enemy.ypos + enemy.ySize
         if enemy.hasAccurateFire then
             local angle = math.atan((player.ypos + player.width / 2) - (enemy.ypos + enemy.width / 2), (player.xpos + player.width / 2) - (enemy.xpos + enemy.width / 2))
             bullet['dx'] = enemy.bulletSpeed * math.cos(angle)

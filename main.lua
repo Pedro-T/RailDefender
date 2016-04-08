@@ -1,6 +1,6 @@
 --
 -- Author: Pedro Teixeira
--- Date: 3/25/2016
+-- Date: 4/8/2016
 --
 
 local bullets = require("bullets")
@@ -92,8 +92,6 @@ local function advanceLevel()
 
 end
 
-
-
 -- Load our assets and set up some structures
 
 local function mainMenu()
@@ -102,15 +100,6 @@ local function mainMenu()
         if (menu.selectedItem == i) then love.graphics.print(">", 290, (200 + i * 25)) end
     end
 end
-
-local function loadAudio()
-    shootSound = love.audio.newSource("assets/shoot.wav")
-    stSound = love.audio.newSource("assets/soundTrack.mp3")
-    stSound:setVolume(0.15)
-    stSound:setLooping(true)
-end
-
-
 
 local function spawnEnemy()
     local enemyIndex = math.random(levelTemplate[game.currentLevel].enemyBoundA, levelTemplate[game.currentLevel].enemyBoundB)
@@ -122,9 +111,6 @@ local function spawnEnemy()
     enemy['ypos'] = -30
     table.insert(game.aliveEnemies, enemy)
 end
-
-
-
 
 -- Move things around -----------------------------------------------------------------------------
 
@@ -233,7 +219,5 @@ function love.draw()
 end
 
 function love.load()
-    loadAudio()
     love.window.setTitle("RailDefender")
-    love.audio.play(stSound)
 end

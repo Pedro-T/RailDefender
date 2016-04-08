@@ -1,6 +1,6 @@
 --
 -- Author: Pedro Teixeira
--- Date: 3/25/2016
+-- Date: 4/8/2016
 --
 
 levels = {
@@ -10,9 +10,7 @@ levels = {
         enemyBoundB=1,
         enemyCount=10,
         enemySpawnIntervalMin=1,
-        enemySpawnIntervalMax=0.5,
-        leftBuddyPresent=true,
-        rightBuddyPresent=true
+        enemySpawnIntervalMax=0.5
     },
 
     {
@@ -21,9 +19,7 @@ levels = {
         enemyBoundB=2,
         enemyCount=60,
         enemySpawnIntervalMin=1,
-        enemySpawnIntervalMax=0.5,
-        leftBuddyPresent=true,
-        rightBuddyPresent=true
+        enemySpawnIntervalMax=0.5
     },
 
     {
@@ -32,9 +28,7 @@ levels = {
         enemyBoundB=2,
         enemyCount=80,
         enemySpawnIntervalMin=0.5,
-        enemySpawnIntervalMax=0.5,
-        leftBuddyPresent=true,
-        rightBuddyPresent=false
+        enemySpawnIntervalMax=0.5
     },
 
     {
@@ -43,9 +37,7 @@ levels = {
         enemyBoundB=3,
         enemyCount=90,
         enemySpawnIntervalMin=1,
-        enemySpawnIntervalMax=0.5,
-        leftBuddyPresent=false,
-        rightBuddyPresent=false
+        enemySpawnIntervalMax=0.5
     },
 
     {
@@ -54,9 +46,7 @@ levels = {
         enemyBoundB=3,
         enemyCount=140,
         enemySpawnIntervalMin=1,
-        enemySpawnIntervalMax=0.5,
-        leftBuddyPresent=false,
-        rightBuddyPresent=false
+        enemySpawnIntervalMax=0.5
     }
 }
 

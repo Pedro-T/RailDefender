@@ -1,6 +1,6 @@
 --
 -- Author: Pedro Teixeira
--- Date: 3/25/2016
+-- Date: 4/8/2016
 --
 
 local anim8 = require("lib/anim8/anim8")
@@ -31,7 +31,7 @@ local tank = {
     shootsAtPlayer = true,
     hasAccurateFire = false,
     bulletGraphic = love.graphics.newImage("assets/tankShot.png"),
-    bulletSpeed = 30,
+    bulletSpeed = 70,
     shotCooldown = 3,
     shotInterval = 6,
     pointValue = 10
