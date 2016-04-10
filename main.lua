@@ -15,8 +15,9 @@ player['xSize'] = 32
 player['ySize'] = 32
 player["movementSpeed"] = 150
 player['shotCooldown'] = 0.25
-player.lives = 5
+player.lives = 10
 player.loseLife = function() player.lives = player.lives - 1 end
+player.fillLives = function () player.lives = 10 end
 
 local game = {}
 game['score'] = 0
@@ -81,10 +82,12 @@ local function clearEnemies()
 end
 
 local function advanceLevel()
-    if (game.currentLevel == 4) then
+    if (game.currentLevel == 5) then
         game.gameState = 4
     else
         clearEnemies()
+        game.deadEnemies = 0
+        player.fillLives()
         game.gameState = 3
         game.intermissionTimer = 5
         game.currentLevel = game.currentLevel + 1
@@ -199,22 +202,21 @@ function love.draw()
             for l, bullet in ipairs(bullets.aliveEnemyBullets) do
                 love.graphics.draw(bullet.graphic, bullet.xpos, bullet.ypos)
             end
-            love.graphics.print("Score: " .. game.score, 400, 50)
-            love.graphics.print("Level: " .. game.currentLevel, 400, 65)
+            love.graphics.print("Level: " .. game.currentLevel .. "\nScore:" .. game.score .. "\nHealth: " .. player.lives .. "\10", 25, 350)
         end
     elseif game.gameState == 3 then
-        love.graphics.print("Level Complete!", 400, 300)
-        love.graphics.print("Score: " .. game.score, 400, 320)
+        love.graphics.print("Level Complete!", 300, 200)
+        love.graphics.print("Score: " .. game.score, 300, 220)
         love.graphics.print("Next level in..." .. game.intermissionTimer)
     elseif game.gameState == 4 then
-        love.graphics.print("Victory!", 350, 200)
-        love.graphics.print("Your score: " .. game.score, 350, 250)
+        love.graphics.print("Victory!", 300, 200)
+        love.graphics.print("Your score: " .. game.score, 300, 250)
     elseif game.gameState == 5 then
-        love.graphics.print("Game over! You lose!", 350, 200)
-        love.graphics.print("Your score: " .. game.score, 350, 250)
+        love.graphics.print("Game over! You lose!", 300, 200)
+        love.graphics.print("Your score: " .. game.score, 300, 250)
     elseif game.gameState == 6 then
         love.graphics.print("Credits", 50, 100)
-        love.graphics.print("Code: Pedro Teixeira\nArt: Pedro Teixeira\nMusic: Jay Man (Check out more at ourmusicbox.com)\nLove2D Framework: Rude (love2d.org) (ZLIB)\nAnim8 library: Kikito (github.com/kikito/anim8) (MIT License)", 50, 150)
+        love.graphics.print("Code: Pedro Teixeira\nArt: Pedro Teixeira\nLove2D Framework: Rude (love2d.org) (ZLIB)\nAnim8 library: Kikito (github.com/kikito/anim8) (MIT License)", 50, 150)
     end
 end
 

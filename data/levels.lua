@@ -8,7 +8,7 @@ levels = {
         name="Day One",
         enemyBoundA=1,
         enemyBoundB=1,
-        enemyCount=10,
+        enemyCount=25,
         enemySpawnIntervalMin=1,
         enemySpawnIntervalMax=0.5
     },
@@ -17,7 +17,7 @@ levels = {
         name="Day Two",
         enemyBoundA=1,
         enemyBoundB=2,
-        enemyCount=60,
+        enemyCount=30,
         enemySpawnIntervalMin=1,
         enemySpawnIntervalMax=0.5
     },
@@ -26,7 +26,7 @@ levels = {
         name="Day Three",
         enemyBoundA=1,
         enemyBoundB=2,
-        enemyCount=80,
+        enemyCount=50,
         enemySpawnIntervalMin=0.5,
         enemySpawnIntervalMax=0.5
     },
@@ -35,7 +35,7 @@ levels = {
         name="Day Four",
         enemyBoundA=1,
         enemyBoundB=3,
-        enemyCount=90,
+        enemyCount=35,
         enemySpawnIntervalMin=1,
         enemySpawnIntervalMax=0.5
     },
@@ -44,7 +44,7 @@ levels = {
         name="Day Five",
         enemyBoundA=1,
         enemyBoundB=3,
-        enemyCount=140,
+        enemyCount=50,
         enemySpawnIntervalMin=1,
         enemySpawnIntervalMax=0.5
     }

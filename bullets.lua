@@ -34,7 +34,7 @@ bullets.fireEnemyBullet = function (player, enemy, delta)
         bullet['xpos'] = enemy.xpos + (enemy.xSize/2 - bullet.graphic:getWidth() / 2)
         bullet['ypos'] = enemy.ypos + enemy.ySize
         if enemy.hasAccurateFire then
-            local angle = math.atan((player.ypos + player.width / 2) - (enemy.ypos + enemy.width / 2), (player.xpos + player.width / 2) - (enemy.xpos + enemy.width / 2))
+            local angle = math.atan((player.ypos + player.ySize / 2) - (enemy.ypos + enemy.ySize / 2), (player.xpos + player.xSize / 2) - (enemy.xpos + enemy.xSize / 2))
             bullet['dx'] = enemy.bulletSpeed * math.cos(angle)
             bullet['dy'] = enemy.bulletSpeed * math.sin(angle)
         else

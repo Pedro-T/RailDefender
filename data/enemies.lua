@@ -31,9 +31,9 @@ local tank = {
     shootsAtPlayer = true,
     hasAccurateFire = false,
     bulletGraphic = love.graphics.newImage("assets/tankShot.png"),
-    bulletSpeed = 70,
-    shotCooldown = 3,
-    shotInterval = 6,
+    bulletSpeed = 65,
+    shotCooldown = 10,
+    shotInterval = 10,
     pointValue = 10
 }
 tank.animationGrid = anim8.newGrid(tank.xSize, tank.ySize, tank.spriteSheet:getWidth(), tank.spriteSheet:getHeight())
@@ -51,9 +51,9 @@ local superTank = {
     shootsAtPlayer = true,
     hasAccurateFire = true,
     bulletGraphic = love.graphics.newImage("assets/tankShot.png"),
-    bulletSpeed = 30,
-    shotCooldown = 3,
-    shotInterval = 7,
+    bulletSpeed = 100,
+    shotCooldown = 15,
+    shotInterval = 15,
     pointValue = 10
 }
 
