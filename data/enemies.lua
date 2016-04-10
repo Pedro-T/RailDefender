@@ -1,6 +1,6 @@
 --
 -- Author: Pedro Teixeira
--- Date: 4/8/2016
+-- Date: 4/10/2016
 --
 
 local anim8 = require("lib/anim8/anim8")
